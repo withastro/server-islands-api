@@ -3,29 +3,32 @@ import type { Context, Config } from "@netlify/functions";
 export default (req: Request, _context: Context) => {
   const url = new URL(req.url);
   const ep = url.searchParams.get('part');
+  const delay = url.searchParams.get('delay');
   switch(ep) {
     case 'rooms': {
-      return rooms();
+      return rooms(delay);
     }
     case 'recommendations': {
-      return recommended();
+      return recommended(delay);
     }
     case 'reviews': {
-      return reviews();
+      return reviews(delay);
     }
   }
   return new Response(null, { status: 404 });
 }
 
-async function rooms() {
-  let p = new Promise((resolve) => setTimeout(resolve, 400));
+async function rooms(delay: string | null) {
+  let d = Number(delay || 400);
+  let p = new Promise((resolve) => setTimeout(resolve, d));
   await p;
   const roomsRemaining = 1 + Math.ceil(Math.random() * 8);
   return Response.json(roomsRemaining);
 }
 
-async function recommended() {
-  let p = new Promise((resolve) => setTimeout(resolve, 800));
+async function recommended(delay: string | null) {
+  let d = Number(delay || 800);
+  let p = new Promise((resolve) => setTimeout(resolve, d));
   await p;
 
   const islands = [
@@ -100,8 +103,9 @@ async function recommended() {
   return Response.json(recommended);
 }
 
-async function reviews() {
-  let p = new Promise((resolve) => setTimeout(resolve, 1000));
+async function reviews(delay: string | null) {
+  let d = Number(delay || 1000);
+  let p = new Promise((resolve) => setTimeout(resolve, d));
   await p;
 
   const allReviews = [
